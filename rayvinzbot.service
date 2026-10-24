@@ -1,0 +1,24 @@
+# systemd service — รัน bot 24/7 (auto-start + auto-restart ถ้า crash)
+# ติดตั้งบน VPS:
+#   1) แก้ YOURUSER ให้ตรงกับ user จริง (เช่น root) และ path ให้ตรงโฟลเดอร์บอท
+#   2) sudo cp rayvinzbot.service /etc/systemd/system/
+#   3) sudo systemctl daemon-reload
+#   4) sudo systemctl enable --now rayvinzbot
+#   เช็กสถานะ:  sudo systemctl status rayvinzbot
+#   ดู log:    journalctl -u rayvinzbot -f
+
+[Unit]
+Description=RayVinz Hub Discord Bot
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+# WorkingDirectory ต้องเป็นโฟลเดอร์บอท เพราะบอทอ่าน .env / keys.txt / qr.png แบบ relative path
+WorkingDirectory=/home/YOURUSER/rayvinzbot
+ExecStart=/usr/bin/python3 rayvinzbot.py
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
